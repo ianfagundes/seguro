@@ -9,12 +9,15 @@ import {
   Switch
 } from "react-native";
 
+import firebase from "firebase";
+
 export default class Tela3 extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       fumante: false,
-      obj: [{ nome: "", email: "" }]
+      nome: "",
+      email: ""
     };
   }
 
@@ -28,6 +31,23 @@ export default class Tela3 extends React.Component {
     this.setState({ [field]: value });
   }
 
+  writeUserData(nome) {
+    firebase
+      .database()
+      .ref("clientes/")
+      .set({
+        nome
+      })
+      .then(data => {
+        //success callback
+        console.log("data ", data);
+      })
+      .catch(error => {
+        //error callback
+        console.log("error ", error);
+      });
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -36,9 +56,6 @@ export default class Tela3 extends React.Component {
         <TextInput
           style={styles.input}
           placeholder="Nome completo"
-          ref={el => {
-            this.nome = el;
-          }}
           value={this.state.nome}
           onChangeText={value => this.OnChangeHandler("nome", value)}
         />
@@ -95,8 +112,7 @@ export default class Tela3 extends React.Component {
         <TouchableOpacity
           style={styles.button}
           value={this.state.nome}
-          onPress={() => this.login(this.state.data)}
-        >
+          onPress={() => this.writeUserData(this.state.nome)}>
           <View>
             <Text style={styles.buttonText}>Enviar Solicitação</Text>
           </View>
